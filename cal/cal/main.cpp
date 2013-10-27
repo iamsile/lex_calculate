@@ -70,6 +70,10 @@ void get_lex_token(Token *token) {
 		} else if (current_char == '/') {
 			token->tKind = Div_Token;
 			return;
+		} else if (current_char == '(') {
+			token->tKind = LP_Token;
+		} else if (current_char == ')') {
+			token->tKind = RP_Token;
 		} else if (current_char >= '0' && current_char <= '9') {
 			if (status == init_Status) {
 				status = int_Status;
@@ -102,15 +106,35 @@ void get_token(Token *token) {
 	}
 }
 
+double parse_expression();
+
 double parse_primary_expression() {
 	Token token;
-
+	double value = 0;
+	int mflag = 0;
+	get_token(&token);
+	if (token.tKind == Sub_Token) {
+		mflag = 1;
+	} else {
+		unget_token(&token);
+	}
 	get_token(&token);
 	if (token.tKind == Number_Token) {
 		return token.value;
+	} else if (token.tKind == LP_Token) {
+		value = parse_expression();
+		get_token(&token);
+		if (token.tKind != RP_Token) {
+			cout << "syntax erros! missing ')'\n";
+			exit(1);
+		}
+	} else {
+		unget_token(&token);
 	}
-	cout << "syntax erros!\n";
-	return 0;
+	if (mflag) {
+		value = -value;
+	}
+	return value;
 }
 
 double parse_term() {

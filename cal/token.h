@@ -16,6 +16,8 @@ typedef enum {
 	Mul_Token,
 	Div_Token,
 	Number_Token,
+	LP_Token,
+	RP_Token,
 	END_OF_LINE_TOKEN
 }TokenKind;
 
